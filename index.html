@@ -1,0 +1,224 @@
+<!DOCTYPE>
+
+<html>
+
+  <head>
+    <title>cose demo</title>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/4.10.3/css/bootstrap-slider.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/4.10.3/bootstrap-slider.min.js"></script>
+    <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
+    <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+    <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.2.5/cytoscape-qtip.js"></script>
+    <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-cola/1.1.1/cytoscape-cola.js"></script>
+
+    <!-- for testing with local version of cytoscape.js -->
+    <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+
+    <style>
+      body {
+        font-family: helvetica;
+        font-size: 14px;
+      }
+
+      #cy {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 999;
+      }
+
+      h1 {
+        opacity: 0.5;
+        font-size: 1em;
+      }
+	  
+	  #container {
+		width: 1000px;
+		height: 800px;
+		margin:0 auto;
+		position:relative;
+	}
+
+	#left-container, 
+	#right-container, 
+	#center-container {
+		height:800px;
+		position:absolute;
+		top:0;
+	}
+
+	#left-container, #right-container {
+		width:200px;
+		color:#686c70;
+		text-align: left;
+		overflow: auto;
+		background-color:#fff;
+		background-repeat:no-repeat;
+		border-bottom:1px solid #ddd;
+	}
+
+	#left-container {
+		left:0;
+		background-position:center right;
+		border-left:1px solid #ddd;
+		
+	}
+
+	#right-container {
+		right:0;
+		
+		background-position:center left;
+		border-right:1px solid #ddd;
+	}
+
+	#right-container h4{
+		text-indent:8px;
+	}
+
+	#center-container {
+		width:600px;
+		left:200px;
+		background-color:#ebebeb;
+		color:#ccc;
+	}
+
+	.text {
+		margin: 7px;
+	}
+
+	#inner-details {
+		font-size:0.8em;
+		list-style:none;
+		margin:7px;
+	}
+	
+	h4 {
+    font-size:1.1em;
+    text-decoration:none;
+    font-weight:normal;
+    color:#23A4FF;
+	}
+	
+	i{
+		color: red;
+	}
+    </style>
+
+    <script>
+      $(function(){
+
+        var cy = window.cy = cytoscape({
+          container: document.getElementById('cy'),
+
+          layout: {
+            name: 'cose',
+            idealEdgeLength: 100,
+            nodeOverlap: 20
+          },
+
+          style: [{"selector":"core","style":{"selection-box-color":"#AAD8FF","selection-box-border-color":"#8BB0D0","selection-box-opacity":"0.5"}},{"selector":"node","style":{"width":"mapData(score, 0, 0.006769776522008331, 20, 60)","height":"mapData(score, 0, 0.006769776522008331, 20, 60)","content":"data(name)","font-size":"12px","text-valign":"center","text-halign":"center","background-color":"#555","text-outline-color":"#555","text-outline-width":"2px","color":"#fff","overlay-padding":"6px","z-index":"10"}},{"selector":"node[?attr]","style":{"shape":"rectangle","background-color":"#aaa","text-outline-color":"#aaa","width":"16px","height":"16px","font-size":"6px","z-index":"1"}},{"selector":"node[?query]","style":{"background-clip":"none","background-fit":"contain"}},{"selector":"node:selected","style":{"border-width":"6px","border-color":"#AAD8FF","border-opacity":"0.5","background-color":"#77828C","text-outline-color":"#77828C"}},{"selector":"edge","style":{"curve-style":"haystack","haystack-radius":"0.5","opacity":"0.4","line-color":"#bbb","width":"mapData(weight, 0, 1, 1, 8)","overlay-padding":"3px"}},{"selector":"node.unhighlighted","style":{"opacity":"0.2"}},{"selector":"edge.unhighlighted","style":{"opacity":"0.05"}},{"selector":".highlighted","style":{"z-index":"999999"}},{"selector":"node.highlighted","style":{"border-width":"6px","border-color":"#AAD8FF","border-opacity":"0.5","background-color":"#394855","text-outline-color":"#394855","shadow-blur":"12px","shadow-color":"#000","shadow-opacity":"0.8","shadow-offset-x":"0px","shadow-offset-y":"4px"}},{"selector":"edge.filtered","style":{"opacity":"0"}},{"selector":"edge[group=\"coexp\"]","style":{"line-color":"#d0b7d5"}},{"selector":"edge[group=\"coloc\"]","style":{"line-color":"#a0b3dc"}},{"selector":"edge[group=\"gi\"]","style":{"line-color":"#90e190"}},{"selector":"edge[group=\"path\"]","style":{"line-color":"#9bd8de"}},{"selector":"edge[group=\"pi\"]","style":{"line-color":"#eaa2a2"}},{"selector":"edge[group=\"predict\"]","style":{"line-color":"#f6c384"}},{"selector":"edge[group=\"spd\"]","style":{"line-color":"#dad4a2"}},{"selector":"edge[group=\"spd_attr\"]","style":{"line-color":"#D0D0D0"}},{"selector":"edge[group=\"reg\"]","style":{"line-color":"#D0D0D0"}},{"selector":"edge[group=\"reg_attr\"]","style":{"line-color":"#D0D0D0"}},{"selector":"edge[group=\"user\"]","style":{"line-color":"#f0ec86"}},{"selector":"edge","style":{"label":"data(weight)","color":"#000000","font-size":"16","text-background-color ":"#ccc"}}],
+    
+          elements: [{"data":{"id":"605755","idInt":605755,"name":"PCNA","score":0.006769776522008331,"query":true,"gene":true},"position":{"x":481.0169597039117,"y":384.8210888234145},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn6944 fn9471 fn10569 fn8023 fn6956 fn6935 fn8147 fn6939 fn6936 fn6629 fn7928 fn6947 fn8612 fn6957 fn8786 fn6246 fn9367 fn6945 fn6946 fn10024 fn10022 fn6811 fn9361 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"612341","idInt":612341,"name":"RAD9A","score":0.0028974131563619387,"query":false,"gene":true},"position":{"x":455.8128125018193,"y":555.4591537139819},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn6935 fn6219 fn6680 fn6676 fn10713 fn7552 fn7495"},{"data":{"id":"608473","idInt":608473,"name":"RAD9B","score":0.0026928704785200708,"query":false,"gene":true},"position":{"x":363.1144068403203,"y":515.7352912086707},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn6935"},{"data":{"id":"602299","idInt":602299,"name":"LIG1","score":0.0023873089881679688,"query":false,"gene":true},"position":{"x":264.10227893804523,"y":631.7198779917306},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn6944 fn9471 fn6956 fn6935 fn8147 fn6939 fn6936 fn6949 fn6957 fn8786 fn6945 fn6946 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"603070","idInt":603070,"name":"RFC5","score":0.0022841757103715943,"query":false,"gene":true},"position":{"x":282.21587939790476,"y":109.57476207336902},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn9471 fn6956 fn6935 fn8147 fn6939 fn6936 fn6957 fn8786 fn6945 fn6946 fn6811 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"610236","idInt":610236,"name":"RFC4","score":0.002235382441847178,"query":false,"gene":true},"position":{"x":205.41323994659498,"y":122.2715768040765},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn9471 fn6956 fn6935 fn8147 fn6939 fn6936 fn6957 fn8786 fn6945 fn6946 fn6811 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"599863","idInt":599863,"name":"RFC2","score":0.001982524582665901,"query":false,"gene":true},"position":{"x":422.6986944382589,"y":59.422072599905285},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn9471 fn6956 fn6935 fn8147 fn6939 fn6936 fn6957 fn8786 fn6945 fn6946 fn6811 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"605846","idInt":605846,"name":"RFC3","score":0.0018726190118726893,"query":false,"gene":true},"position":{"x":192.72587571240607,"y":30.601237157877808},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn6931 fn9632 fn7950 fn9188 fn9471 fn10569 fn6956 fn6935 fn8147 fn6939 fn7338 fn6936 fn6957 fn8786 fn7453 fn7451 fn6945 fn6946 fn7456 fn7454 fn7469 fn7467 fn6811 fn7463 fn7464 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"600535","idInt":600535,"name":"UNG","score":0.0018134484466597045,"query":false,"gene":true},"position":{"x":497.37919617137817,"y":693.0523864227225},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn8023 fn7928"},{"data":{"id":"599724","idInt":599724,"name":"RFC1","score":0.001740600741472309,"query":false,"gene":true},"position":{"x":381.8836285591501,"y":194.7788667091606},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn9471 fn6956 fn6935 fn8147 fn6939 fn6936 fn6957 fn8786 fn6945 fn6946 fn6811 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"id":"600046","idInt":600046,"name":"POLD1","score":0.0014783091464922182,"query":false,"gene":true},"position":{"x":91.6808784584024,"y":252.85442763278502},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":"fn10273 fn6944 fn9471 fn10569 fn8823 fn9180 fn6956 fn6935 fn8147 fn6939 fn6936 fn6648 fn6680 fn6957 fn8786 fn6246 fn9367 fn9368 fn6676 fn10713 fn6945 fn6946 fn7921 fn6811 fn8380 fn7495 fn7500 fn6279 fn6278 fn8569 fn7641 fn8568 fn6943"},{"data":{"source":"606768","target":"603700","weight":0.0036671148,"group":"spd","networkId":1229,"networkGroupId":24,"intn":true,"rIntnId":581,"id":"e579"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"612341","target":"605755","weight":0.49999872,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":582,"id":"e580"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"608473","target":"605755","weight":0.49999872,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":583,"id":"e581"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"608473","target":"612341","weight":0.50000256,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":584,"id":"e582"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"610236","target":"603070","weight":0.07193713,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":585,"id":"e583"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599863","target":"603070","weight":0.0419809,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":586,"id":"e584"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599863","target":"610236","weight":0.056363728,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":587,"id":"e585"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"605846","target":"603070","weight":0.015254494,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":588,"id":"e586"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"605846","target":"610236","weight":0.020485014,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":589,"id":"e587"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"605846","target":"599863","weight":0.019407582,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":590,"id":"e588"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599724","target":"603070","weight":0.012506178,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":591,"id":"e589"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599724","target":"610236","weight":0.016794344,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":592,"id":"e590"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599724","target":"599863","weight":0.015911028,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":593,"id":"e591"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""},{"data":{"source":"599724","target":"605846","weight":0.019493334,"group":"spd","networkId":1230,"networkGroupId":24,"intn":true,"rIntnId":594,"id":"e592"},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbed":false,"grabbable":true,"classes":""}]
+
+        });
+		
+		  cy.nodes().forEach(function(n){
+			var g = n.data('name');
+
+			n.qtip({
+			  content: [
+				{
+				  name: 'GeneCard',
+				  url: 'http://www.genecards.org/cgi-bin/carddisp.pl?gene=' + g
+				},
+				{
+				  name: 'UniProt search',
+				  url: 'http://www.uniprot.org/uniprot/?query='+ g +'&fil=organism%3A%22Homo+sapiens+%28Human%29+%5B9606%5D%22&sort=score'
+				},
+				{
+				  name: 'GeneMANIA',
+				  url: 'http://genemania.org/search/human/' + g
+				}
+			  ].map(function( link ){
+				return '<a target="_blank" href="' + link.url + '">' + link.name + '</a>';
+			  }).join('<br />\n'),
+			  position: {
+				my: 'top center',
+				at: 'bottom center'
+			  },
+			  style: {
+				classes: 'qtip-bootstrap',
+				tip: {
+				  width: 16,
+				  height: 8
+				}
+			  }
+			});
+		  });
+
+		  $('#config-toggle').on('click', function(){
+			$('body').toggleClass('config-closed');
+
+			cy.resize();
+		  });
+		  
+		  cy.on('select unselect ',function(evt){
+			var html = "";
+			cy.nodes().forEach(function( ele ){
+				if(ele.selected()){
+					html = html + '<i color = red>' + ele.data('name') + '</i> is selected</p>' ;
+				}
+			  //html = html + '<i color = red>' + ele.data('name') + '</i> is ' + ( ele.selected() ? 'selected' : 'not selected' ) + '</p>' ;
+			});
+			document.getElementById('inner-details').innerHTML = html;
+		  });
+		  
+      });
+    </script>
+  </head>
+
+  <body>
+    
+<div id="container">
+	<div id="left-container">
+		<div class="text">
+		<h4>
+			Graph Operations    
+		</h4> 
+			<b>Click</b> to select a node.<br /><br />
+			<b>Click background</b> to unselect all.<br /><br />
+			<b>Press modifier key</b> (shift, command, control, alt) to select multiple nodes.<br /><br />
+			<b>Press modifier key</b> for box selection.<br /><br />
+			<b>Grab</b> and <b>drag </b>background to pan.<br /><br />
+			<b>Mouse wheel</b> to zoom.<br /><br />
+			
+		</div>
+	</div>
+
+	<div id="center-container">
+		<div id="cy"></div>
+	</div>
+	<div id="right-container">
+		<div id="inner-details"></div>
+	</div>
+</div>
+    
+
+  </body>
+
+</html>
